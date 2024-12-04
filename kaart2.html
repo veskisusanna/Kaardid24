@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" />
+
+    <script>
+   let kaart, abikiht, kohad;
+
+	   function lugemine1(){
+	      fetch("https://www.tlu.ee/~jaagup/andmed/muu/kohad.txt").
+		     then(andmed => andmed.text()).then(salvestaKohad);
+	   }
+	   	   
+	   function salvestaKohad(t){
+	      vastus1.innerText=t;
+		  kohad={};
+		  if(t.startsWith("koht")){
+			 let read=t.split("\n").splice(1);
+			 for(let rida of read){
+			    let m=rida.split(",");
+				if(m.length==4){
+				  kohad[m[0]]=[parseFloat(m[1]), parseFloat(m[2])]
+				}
+			 }
+		  }
+		  console.log(kohad);
+	   }
+	   
+   function algus(){
+    kaart = L.map('kaardikiht').setView([59.439, 24.773], 8);
+      new L.TileLayer(
+  'https://tiles.maaamet.ee/tm/tms/1.0.0/hybriid@GMC/{z}/{x}/{y}.png&ASUTUS=TLU&ERIALA=DIGIHUMANITAARIA', {
+	  attribution: "Map: <a  href='http://www.maaamet.ee/'>Maa-amet</a>",
+	  tms: true,
+    }).addTo(kaart);
+    abikiht=L.layerGroup()
+	abikiht.addTo(kaart);
+   }
+   function vajutus1(){
+    let sonad=vastus1.innerText.replace(",", " ").
+        replace(".","").split(" ");
+        abikiht.clearLayers();
+    for(let sona of sonad){
+        if(kohad[sona]){
+            L.marker(kohad[sona.trim()]).addTo(abikiht);
+        }
+    }
+    vastus1.innerText=kohanimed;
+   }
+
+   function loe(aadress){
+    fetch(aadress).then(d => d.text()).then(kuvaTekst);
+   }
+
+   function kuvaTekst(t){
+    vastus1.innerText=t;
+   }
+	</script>
+  </head>
+  <body onload="lugemine1(); algus()">
+     <div id="kaardikiht" style="width: 800px; height: 400px"></div>
+     <textarea id="kast1" style="width: 600px; height: 100px">
+    </textarea>
+     <input type="button" onclick="vajutus1()" value="Uuri" />
+     <input type="button" onclick="loe('uudis1.txt')" value="Uudis" />
+
+	 <div id="vastus1">Vastuse koht</div>
+  </body>
+</html>
