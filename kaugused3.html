@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>Kaart</title>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" />
+ <style>
+   body {padding: 0; margin: 0; }
+   html, body { height: 100%; width: 100%;}
+   #kaardikiht {float:bottom; width:600px; height:400px;}
+ </style>
+ <script>
+   let kaart;
+   let keskmarker, marker2;
+   let keskused={
+      "Tallinn":L.latLng(59.417138, 24.748702),
+	  "Jõhvi":L.latLng(59.350887, 27.426369),
+	  "Tartu":L.latLng(58.368597, 26.730735),
+	  "Pärnu":L.latLng(58.377238, 24.524231),
+      "Paide":L.latLng(58.883333, 25.566667)
+      
+   }
+   
+   function algus(){
+    kaart = L.map('kaardikiht').setView([59.250674, 25.738606], 16);
+      new L.TileLayer(  'https://tiles.maaamet.ee/tm/tms/1.0.0/hybriid@GMC/{z}/{x}/{y}.png&ASUTUS=TLU&ERIALA=DIGIHUMANITAARIA', {
+	  attribution: "Map: <a  href='http://www.maaamet.ee/'>Maa-amet</a>",
+	  tms: true,
+    }).addTo(kaart);
+	marker2=L.marker([59.250688, 25.738778], {draggable: true});
+	marker2.addTo(kaart);
+	marker2.on("move", liigub)
+   }
+   function liigub(){
+        let vastused=[]
+		for(let koht in keskused){
+		  vastused.push([keskused[koht].distanceTo(marker2.getLatLng()), koht]);
+		}
+		vastus.innerText=vastused;
+
+   }
+
+  </script>
+ </head>  
+ <body onload="algus()">
+  <div id="kaardikiht"></div>
+  <div id="vastus">abc</div>
+ </body>
+</html>
